@@ -3,16 +3,19 @@
 #include <vector>
 #include <map>
 #include <fstream>
+#include<iomanip>
 
 int main () {
-    std::ifstream istr ("word_test.txt");
+
+    std::ifstream istr ("word_list.txt");
     std::string temp;
     std::map<char,std::vector<int>> characters;
+
     // iterate through the file of words
     while (istr>>temp) {
         // iterate through each letter of each word
         for (short i = 0;i<5;i++) {
-            // check if the letter is in the map yet
+            // check if the letter is in the map
             if (characters.find(temp[i])==characters.end()) {
                 // create a vector for the letter if it is not in the map yet
                 std::vector<int> tempvec;
@@ -28,10 +31,12 @@ int main () {
             }
         }
     }
+
+    // write the collected data to the output file
     for (auto itr : characters) {
-        std::cout<<itr.first<<":\t";
+        std::cout<<itr.first<<":";
         for (short i = 0;i<6;i++) {
-            std::cout<<itr.second[i]<<" ";
+            std::cout<<std::setw(6)<<itr.second[i];
         }
         std::cout<<std::endl;
     }
