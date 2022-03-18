@@ -152,7 +152,11 @@ void updateWords (std::list<std::string> &oldWords,
 
             // if the letter is in the correct position
             else if (guess[i].second==2&&!(word.find(guess[i].first)==i)){
-                // itr = oldWords.erase(itr);
+                
+                // remove the word and set flag to true
+                itr = oldWords.erase(itr);
+                deleted = true;
+                break;
             } 
         }
 
