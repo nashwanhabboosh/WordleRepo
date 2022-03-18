@@ -128,18 +128,26 @@ void updateWords (std::list<std::string> &oldWords,
         // iterates through all the letters of the guessed word
         for (unsigned short i = 0;i<5;i++) {
             
-            // if the letter is not in the word
+            // if the letter is not in the word, remove the word
             if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
-                    std::cout<<"removing: "<<word<<", letter "<<guess[i].first<<"\n";
+                    
+                    // remove the word and set flag to true
                     itr = oldWords.erase(itr);
                     deleted = true;
                     break;
             } 
 
             // if the letter is in the wrong location
-            else if (guess[i].second==1&&(!(word.find(guess[i].first)!=std::string::npos&&word.find(guess[i].first)!=i))) {
+            // removes the word if the letter is in the word in the correct location
+            // or it is not in the word at all
+            else if (guess[i].second==1&&
+                    (word.find(guess[i].first)==i ||
+                    word.find(guess[i].first)==std::string::npos)) {
+                    
+                    // remove the word and set flag to true
                     itr = oldWords.erase(itr);
-                    // *itr="\""+word+"\"";
+                    deleted = true;
+                    break;
             }
 
             // if the letter is in the correct position
@@ -183,10 +191,6 @@ int main () {
 
     // get a guess from the user
     std::pair<char,int>* guess = getGuess();
-
-    for (int i = 0;i<5;i++) {
-        std::cout<<guess[i].first<<" : "<<guess[i].second<<std::endl;
-    }
 
     std::map<char,std::vector<int>> characters;
     
