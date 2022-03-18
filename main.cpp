@@ -169,7 +169,7 @@ void updateWords (std::list<std::string> &oldWords,
 }
 
 // initially gets the words from the input file 
-std::list<std::string>* parseWordsFile (std::string inputFile) {
+std::list<std::string>* parseWordsFile (const std::string &inputFile) {
     
     std::ifstream istr (inputFile);
 
@@ -189,8 +189,36 @@ std::list<std::string>* parseWordsFile (std::string inputFile) {
 
 // returns the best guess for the current word list 
 // find the word with the closest to optimal letter in each position
-std::string bestGuessByLetter(const std::list<std::string> &words) {
+// generates a score for each word based on how many occurences each 
+// letter in the word has at that position
+// for example, if in the word "smart", 
+// s appears 100 times in the first position
+// m appears 100 times in the second position
+// etc, then the score for "smart" would be 500
+// whichever word has the highest score is suggested 
+std::string bestGuessByLetter(std::map<char,std::vector<int>>& characters, const std::list<std::string>& words) {
+    
+    // holds the highest score so far encountered and the word it came from
+    int maxScore = 0;
+    std::string bestWord = "";
 
+    // iterates through all the possible words
+    for (std::string word : words) {
+        
+        // holds the score for the current word
+        int currentScore = 0;
+
+        // iterates through each letter of the current word
+        for (unsigned int i = 0;i<5;i++) {
+            currentScore += characters[word[i]][i];
+        }
+        // if this word is better then the previous best, remember it
+        if (currentScore>maxScore) {
+            maxScore = currentScore;
+            bestWord = word;
+        }
+    }
+    return bestWord;
 }
 
 // returns a map of the frequencies of each letter at each position
@@ -229,7 +257,7 @@ std::map<char,std::vector<int>> getLetterData (const std::list<std::string>& wor
 }
 
 // prints the map of letter data
-void printLetterData (std::map<char,std::vector<int>>& characters) {
+void printLetterData (const std::map<char,std::vector<int>>& characters) {
 
     // formatting
     std::cout<<"Displaying letter occurences per position"<<std::endl;
@@ -299,7 +327,8 @@ int main () {
         } else if (selection == 4) {
             
             // get suggested word
-
+            occurences = getLetterData(*words);
+            std::cout<<bestGuessByLetter(occurences,*words)<<" seems to be the best guess."<<std::endl;
         }
     }
 
