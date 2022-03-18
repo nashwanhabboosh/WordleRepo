@@ -1,5 +1,7 @@
 This program uses an algorithm based on letter frequencies to find optimal guesses in the game WORDLE
 
+Compiled for linux
+
 Explaining the game:
 The objective of the game is to guess a five letter keyword
 The user inputs five letter words one by one and is given the following information for each letter in the guess word
@@ -12,3 +14,6 @@ Explaining the algorithm:
 The user enters a starting guess and the information gotten from the guess.
 The most common letter at each position in the word is found and these letters are combined into a word.
 If this word is a valid guess, the guess is made.
+
+Known issues:
+Solutions with repeating letters will be removed early

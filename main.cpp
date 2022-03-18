@@ -8,6 +8,32 @@
 #include <list>
 #include <ctype.h>
 
+// gets a guess from the user, used for testing
+std::pair<char,int>* getGuess() {
+    
+    // holds the guesses input by the user
+    std::pair<char,int>* guess_pairs = new std::pair<char,int>[5];
+    
+    // iterates 5 times, getting the letter and value for each letter of the guess
+    for (int i = 0;i<5;i++) {
+
+        // holds the current pair and its data
+        std::pair<char,int> cur_pair;
+        char cur_char;
+        int cur_val;
+
+        // gets the values from the user
+        std::cin>>cur_char;
+        std::cin>>cur_val;
+
+        // make the current pair and append it to the array
+        cur_pair.first=cur_char;
+        cur_pair.second=cur_val;
+        guess_pairs[i]=cur_pair;
+    }
+    return guess_pairs;
+}
+
 // guess is taken and stored as an array of pairs 
 // first is the letter second is letter value
 // 0-not in word
@@ -35,17 +61,17 @@ std::pair<char,int>* makeGuess () {
     for (short i = 0;i<5;i++) {
 
         // adds each letter to data
-        data[i].first=color[i];
+        data[i].first=guess[i];
 
         // gets the color for each letter
         std::cout<<guess[i]<<std::endl;
         std::cin>>color;
         transform(color.begin(), color.end(), color.begin(), ::tolower);
-        if (color=="green") {
+        if (color=="green"||color == "g") {
             data[i].second=2;
-        } else if (color == "yellow") {
+        } else if (color == "yellow"||color == "y") {
             data[i].second=1;
-        } else if (color == "black") {
+        } else if (color == "black"||color == "b") {
             data[i].second=0;
         } else {
             std::cout<<"Invalid color, please type \"green\", \"yellow\" or \"black\"\n";
@@ -60,11 +86,13 @@ int prompt () {
     std::cout<<"Would you like to:\n"<<
                 "1. Make a guess\n"<<
                 "2. See possible remaining words\n"<<
-                "3. See letter data"<<std::endl;
+                "3. See letter data\n"<<
+                "4. See suggested guess\n"<<
+                "0. Exit the program"<<std::endl;
     int temp;
     std::cin>>temp;
-    if (temp<1||temp>3) {
-        std::cerr<<"ERROR: Invalid option, please select an option from 1 - 3\n";
+    if (temp<0||temp>4) {
+        std::cerr<<"ERROR: Invalid option, please select an option from 0 - 4\n";
         temp=prompt();
     }
     return temp;
@@ -72,46 +100,18 @@ int prompt () {
 
 // print out the remaining words
 void getWords(const std::list<std::string> &words) {
-    
-    // stream to output to
-    std::ofstream out;
-    out.open("output.txt");
+
+    std::cout<<"Remaining possibilites: "<<std::endl;
 
     // iterate through the words and print them
     std::list<std::string>::const_iterator itr = words.begin();
     for (unsigned int i = 0;i<words.size();i++) {
-        out<<*itr<<" ";
+        std::cout<<*itr<<" ";
         itr++;
 
         // add a line break every 5 words
-        /*if (i%5==4||i==words.size()-1)*/ out<<std::endl; 
+        if (i%5==4||i==words.size()-1) std::cout<<std::endl; 
     }
-}
-
-// gets a guess from the user
-std::pair<char,int>* getGuess() {
-    
-    // holds the guesses input by the user
-    std::pair<char,int>* guess_pairs = new std::pair<char,int>[5];
-    
-    // iterates 5 times, getting the letter and value for each letter of the guess
-    for (int i = 0;i<5;i++) {
-
-        // holds the current pair and its data
-        std::pair<char,int> cur_pair;
-        char cur_char;
-        int cur_val;
-
-        // gets the values from the user
-        std::cin>>cur_char;
-        std::cin>>cur_val;
-
-        // make the current pair and append it to the array
-        cur_pair.first=cur_char;
-        cur_pair.second=cur_val;
-        guess_pairs[i]=cur_pair;
-    }
-    return guess_pairs;
 }
 
 // remove all words that dont meet the criteria of the guess
@@ -187,25 +187,134 @@ std::list<std::string>* parseWordsFile (std::string inputFile) {
     return words;
 }
 
+// returns the best guess for the current word list 
+// find the word with the closest to optimal letter in each position
+std::string bestGuessByLetter(const std::list<std::string> &words) {
+
+}
+
+// returns a map of the frequencies of each letter at each position
+// first 5 elements of the vector are the positions in the word, 
+// last element is total occurences
+std::map<char,std::vector<int>> getLetterData (const std::list<std::string>& words) {
+    
+    // holds the occurences of each letter at each position
+    std::map<char,std::vector<int>> occurences;
+
+    // iterates through all remaining words
+    for (std::string word : words) {
+        
+        // iterate through each letter
+        for (short i = 0;i<5;i++) {
+
+            // check if the letter is in the map yet
+            if (occurences.find(word[i])==occurences.end()) {
+                
+                // insert the letter if not present
+                std::vector<int> tempvec;
+                for (short j = 0;j<6;j++) {
+                    if (j==i||j==5) tempvec.push_back(1);
+                    else tempvec.push_back(0);
+                }
+                occurences.insert(std::make_pair(word[i],tempvec));
+            } 
+            // if it is in the map, increment the positional and total counters
+            else {
+                occurences[word[i]][i]++;
+                occurences[word[i]][5]++;
+            }
+        }
+    }
+    return occurences;
+}
+
+// prints the map of letter data
+void printLetterData (std::map<char,std::vector<int>>& characters) {
+
+    // formatting
+    std::cout<<"Displaying letter occurences per position"<<std::endl;
+    std::cout<<std::setw(6)<<"1st"
+             <<std::setw(6)<<"2nd"
+             <<std::setw(6)<<"3rd"
+             <<std::setw(6)<<"4th"
+             <<std::setw(6)<<"5th"
+             <<std::setw(6)<<"total"
+             <<std::endl;
+             
+    // iterate through the map and display the frequencies
+    for (auto itr : characters) {
+        std::cout<<itr.first<<":";
+        for (short i = 0;i<6;i++) {
+            std::cout<<std::setw(6)<<itr.second[i];
+        }
+        std::cout<<std::endl;
+    }
+}
+
 int main () {
 
     // parse the input file
     std::string wordsFile = "word_list.txt";
     std::list<std::string>* words = parseWordsFile(wordsFile);
 
+    // function the user wants to call
+    int selection = -1;
+
     // get a guess from the user
-    std::pair<char,int>* guess = getGuess();
+    std::pair<char,int>* guess;
 
-    std::map<char,std::vector<int>> characters;
+    // holds the number of occurences for each letter
+    std::map<char,std::vector<int>> occurences;
+
+    // continue running as long as user keeps calling functions
+    while (selection!=0) {
+
+        // add line break between iterations
+        if (selection != -1) std::cout<<std::endl; 
+        
+        // get user function call
+        selection = prompt();
+        
+        // call correct function
+        if (selection == 0) {
+            std::cout<<"Program Terminated"<<std::endl;
+            exit(0);
+        } else if (selection == 1) {
+
+            // make a guess and update the word list
+            guess = makeGuess();
+            updateWords(*words,guess);
+
+        } else if (selection == 2) {
+
+            // print possible remaining words
+            getWords(*words);
+
+        } else if (selection == 3) {
+
+            // print letter data
+            occurences = getLetterData(*words);
+            printLetterData(occurences);
+
+        } else if (selection == 4) {
+            
+            // get suggested word
+
+        }
+    }
+
+    
+
+
+
+    
     
 
     
 
     
 
-    updateWords(*words,guess);
-
-    getWords(*words);
+    
 
     
 
@@ -228,12 +337,6 @@ int main () {
         }*/
 
     // write the collected data to the output file
-    for (auto itr : characters) {
-        std::cout<<itr.first<<":";
-        for (short i = 0;i<6;i++) {
-            std::cout<<std::setw(6)<<itr.second[i];
-        }
-        std::cout<<std::endl;
-    }
+    
 
 }
