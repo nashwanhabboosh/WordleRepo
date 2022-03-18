@@ -6,6 +6,7 @@
 #include <fstream>
 #include <iomanip>
 #include <list>
+#include <ctype.h>
 
 // guess is taken and stored as an array of pairs 
 // first is the letter second is letter value
@@ -54,6 +55,7 @@ std::pair<char,int>* makeGuess () {
     return data;
 }
 
+// prompts the user for what action to take
 int prompt () {
     std::cout<<"Would you like to:\n"<<
                 "1. Make a guess\n"<<
@@ -68,36 +70,112 @@ int prompt () {
     return temp;
 }
 
-void updateWords (std::list<std::string> &oldWords, 
-                    const std::pair<char,int>* &guess) {
-    for (unsigned int i = 0;i<oldWords.size();i++) {
+// gets a guess from the user
+std::pair<char,int>* getGuess(std::ifstream istr) {
+    
+    // holds the guesses input by the user
+    std::pair<char,int>* guess_pairs = new std::pair<char,int>[5];
+    
+    // iterates 5 times, getting the letter and value for each letter of the guess
+    for (int i = 0;i<5;i++) {
 
+        // holds the current pair and its data
+        std::pair<char,int> cur_pair;
+        char cur_char;
+        int cur_val;
+
+        // gets the values from the user
+        istr>>cur_char;
+        istr>>cur_val;
+
+        // make the current pair and append it to the array
+        cur_pair.first=cur_char;
+        cur_pair.second=cur_val;
+        guess_pairs[i]=cur_pair;
+    }
+    return guess_pairs;
+}
+
+// remove all words that dont meet the criteria of the guess
+void updateWords (std::list<std::string> &oldWords, 
+                    std::pair<char,int>* &guess) {
+    // iterates through the list of words
+    for (std::list<std::string>::iterator itr = oldWords.begin();itr!=oldWords.end(); ) {
+        std::string word = *itr;
+
+        // iterates through all the letters of the guessed word
+        for (unsigned short i = 0;i<5;i++) {
+
+            // if the letter is not in the word
+            if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
+                    itr = oldWords.erase(itr);
+            } 
+
+            // if the letter is in the wrong location
+            else if (guess[i].second==1&&(!(word.find(guess[i].first)!=std::string::npos&&word.find(guess[i].first)!=i))) {
+                    itr = oldWords.erase(itr);
+                    // *itr="\""+word+"\"";
+            }
+
+            // if the letter is in the correct position
+            else if (guess[i].second==2&&!(word.find(guess[i].first)==i)){
+                // itr = oldWords.erase(itr);
+            } else {
+                ++itr;
+            }
+        }
     }
 }
 
 // print out the remaining words
 void getWords(const std::list<std::string> &words) {
-    std::list<std::string>::iterator itr = words.begin();
+    std::list<std::string>::const_iterator itr = words.begin();
     for (unsigned int i = 0;i<words.size();i++) {
+        std::cout<<*itr<<" ";
+        itr++;
         if (i%5==4||i==words.size()-1) std::cout<<std::endl; 
     }
 }
 
-int main () {
+// initially gets the words from the input file 
+std::list<std::string>* parseWordsFile (std::string inputFile) {
+    
+    std::ifstream istr (inputFile);
 
-    // makeGuess();
-
-    std::ifstream istr ("word_test.txt");
-    std::string temp;
+    // holds the words
     std::list<std::string>* words = new std::list<std::string>();
-    std::map<char,std::vector<int>> characters;
+
+    // holds each word temporarily
+    std::string temp;
 
     // iterate through the file of words
     while (istr>>temp) {
         words->push_back(temp);
     }
 
+    return words;
+}
+
+int main () {
+
+    
+    std::string wordsFile = "word_list.txt";
+    std::list<std::string>* words = parseWordsFile(wordsFile);
+
     getWords(*words);
+    
+    
+    
+    std::map<char,std::vector<int>> characters;
+    
+
+    
+
+    
+
+    // updateWords(*words,test_pairs);
+
+    
 
     /*// iterate through each letter of each word
     for (short i = 0;i<5;i++) {
