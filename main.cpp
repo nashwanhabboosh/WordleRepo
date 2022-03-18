@@ -70,8 +70,26 @@ int prompt () {
     return temp;
 }
 
+// print out the remaining words
+void getWords(const std::list<std::string> &words) {
+    
+    // stream to output to
+    std::ofstream out;
+    out.open("output.txt");
+
+    // iterate through the words and print them
+    std::list<std::string>::const_iterator itr = words.begin();
+    for (unsigned int i = 0;i<words.size();i++) {
+        out<<*itr<<" ";
+        itr++;
+
+        // add a line break every 5 words
+        /*if (i%5==4||i==words.size()-1)*/ out<<std::endl; 
+    }
+}
+
 // gets a guess from the user
-std::pair<char,int>* getGuess(std::ifstream istr) {
+std::pair<char,int>* getGuess() {
     
     // holds the guesses input by the user
     std::pair<char,int>* guess_pairs = new std::pair<char,int>[5];
@@ -85,8 +103,8 @@ std::pair<char,int>* getGuess(std::ifstream istr) {
         int cur_val;
 
         // gets the values from the user
-        istr>>cur_char;
-        istr>>cur_val;
+        std::cin>>cur_char;
+        std::cin>>cur_val;
 
         // make the current pair and append it to the array
         cur_pair.first=cur_char;
@@ -101,14 +119,21 @@ void updateWords (std::list<std::string> &oldWords,
                     std::pair<char,int>* &guess) {
     // iterates through the list of words
     for (std::list<std::string>::iterator itr = oldWords.begin();itr!=oldWords.end(); ) {
+        
         std::string word = *itr;
+        
+        // holds whether the word was deleted or not
+        bool deleted = false;
 
         // iterates through all the letters of the guessed word
         for (unsigned short i = 0;i<5;i++) {
-
+            
             // if the letter is not in the word
             if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
+                    std::cout<<"removing: "<<word<<", letter "<<guess[i].first<<"\n";
                     itr = oldWords.erase(itr);
+                    deleted = true;
+                    break;
             } 
 
             // if the letter is in the wrong location
@@ -120,20 +145,14 @@ void updateWords (std::list<std::string> &oldWords,
             // if the letter is in the correct position
             else if (guess[i].second==2&&!(word.find(guess[i].first)==i)){
                 // itr = oldWords.erase(itr);
-            } else {
-                ++itr;
-            }
+            } 
         }
-    }
-}
 
-// print out the remaining words
-void getWords(const std::list<std::string> &words) {
-    std::list<std::string>::const_iterator itr = words.begin();
-    for (unsigned int i = 0;i<words.size();i++) {
-        std::cout<<*itr<<" ";
-        itr++;
-        if (i%5==4||i==words.size()-1) std::cout<<std::endl; 
+        // iterate to the next word if none were deleted
+        if (!deleted) {
+            deleted = false;
+            itr++;
+        }
     }
 }
 
@@ -158,14 +177,17 @@ std::list<std::string>* parseWordsFile (std::string inputFile) {
 
 int main () {
 
-    
+    // parse the input file
     std::string wordsFile = "word_list.txt";
     std::list<std::string>* words = parseWordsFile(wordsFile);
 
-    getWords(*words);
-    
-    
-    
+    // get a guess from the user
+    std::pair<char,int>* guess = getGuess();
+
+    for (int i = 0;i<5;i++) {
+        std::cout<<guess[i].first<<" : "<<guess[i].second<<std::endl;
+    }
+
     std::map<char,std::vector<int>> characters;
     
 
@@ -173,7 +195,9 @@ int main () {
 
     
 
-    // updateWords(*words,test_pairs);
+    updateWords(*words,guess);
+
+    getWords(*words);
 
     
 
