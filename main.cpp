@@ -89,13 +89,17 @@ int prompt () {
                 "3. See letter data\n"<<
                 "4. See suggested guess\n"<<
                 "0. Exit the program"<<std::endl;
-    int temp;
+
+    // take character input and convert it to int
+    char temp;
     std::cin>>temp;
-    if (temp<0||temp>4) {
-        std::cerr<<"ERROR: Invalid option, please select an option from 0 - 4\n";
-        temp=prompt();
+    int tempNum = (int)temp-48;
+
+    if (tempNum<0||tempNum>4) {
+        std::cerr<<(int)temp<<" ERROR: Invalid option, please select an option from 0 - 4\n\n";
+        return prompt();
     }
-    return temp;
+    return tempNum;
 }
 
 // print out the remaining words
@@ -117,6 +121,7 @@ void getWords(const std::list<std::string> &words) {
 // remove all words that dont meet the criteria of the guess
 void updateWords (std::list<std::string> &oldWords, 
                     std::pair<char,int>* &guess) {
+    
     // iterates through the list of words
     for (std::list<std::string>::iterator itr = oldWords.begin();itr!=oldWords.end(); ) {
         
