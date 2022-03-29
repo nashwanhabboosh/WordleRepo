@@ -192,6 +192,31 @@ std::list<std::string>* parseWordsFile (const std::string &inputFile) {
     return words;
 }
 
+// checks if all remaining words have only 1 letter not in common
+std::vector<char> isOneOff (std::list<std::string> &words) {
+    
+    // holds the interchangable characters
+    std::vector<char> output;
+
+    /*
+    // checks whether a mismatching letter has been found in the 
+    // current word yet or not; only 1 can be found per word
+    bool flag = false;
+
+    // iterate through the remaining words
+    for (std::string word : words) {
+        
+        for (short i = 0;i<5;i++) {
+            if () {
+                
+            }
+        }
+
+    }
+    */
+   return output;
+}
+
 // returns the best guess for the current word list 
 // find the word with the closest to optimal letter in each position
 // generates a score for each word based on how many occurences each 
