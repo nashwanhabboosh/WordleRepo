@@ -118,6 +118,21 @@ void getWords(const std::list<std::string> &words) {
     }
 }
 
+// returns an array of the indecies of the apperances the input letter
+std::vector<int> findAllAppearences (std::string word,char look) {
+
+    std::vector<int> output;
+
+    // iterate through the word, pushing back matching indecies
+    for (short i = 0;i<word.size();i++) {
+        if (word[i] == look) {
+            output.push_back(i);
+        }
+    }
+
+    return output;
+}
+
 // remove all words that dont meet the criteria of the guess
 void updateWords (std::list<std::string> &oldWords, 
                     std::pair<char,int>* &guess) {
@@ -134,8 +149,13 @@ void updateWords (std::list<std::string> &oldWords,
         for (unsigned short i = 0;i<5;i++) {
             
             // if the letter is not in the word, remove the word
-            if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
-                    
+            if (guess[i].second==0) {
+ 
+                
+                if () {
+
+                }
+
                     // remove the word and set flag to true
                     itr = oldWords.erase(itr);
                     deleted = true;
