@@ -177,9 +177,6 @@ int findInPairs (std::pair<char,int>* list, char element) {
 // remove all words that dont meet the criteria of the guess
 void updateWords (std::list<std::string> &oldWords, 
                     std::pair<char,int>* &guess) {
-    
-    std::ofstream output;
-    output.open("output.txt");
 
     // iterates through the list of words
     for (std::list<std::string>::iterator itr = oldWords.begin();itr!=oldWords.end(); ) {
@@ -195,8 +192,9 @@ void updateWords (std::list<std::string> &oldWords,
             // if the letter is not in the word, remove the word
             if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
 
+                // if the letter appears only once in the guess and word, remove it
                 if (!multipleApperances(guess[i].first,word)&&!multipleApperances(guess[i].first,guess)) {
-                    output<<word<<" 0 "<<guess[i].first<<std::endl;
+
                     // remove the word and set flag to true
                     itr = oldWords.erase(itr);
                     deleted = true;
@@ -211,8 +209,9 @@ void updateWords (std::list<std::string> &oldWords,
                     (word[i]==guess[i].first ||
                     word.find(guess[i].first)==std::string::npos)) {
                     
+                    // if the letter appears only once in the guess and word, remove it
                     if (!multipleApperances(guess[i].first,word)&&!multipleApperances(guess[i].first,guess)) {
-                        output<<word<<" 1"<<std::endl;
+
                         // remove the word and set flag to true
                         itr = oldWords.erase(itr);
                         deleted = true;
@@ -222,7 +221,7 @@ void updateWords (std::list<std::string> &oldWords,
 
             // if the letter is in the correct position
             else if (guess[i].second==2&&guess[i].first!=word[i]){
-                output<<word<<" 2"<<std::endl;
+
                 // remove the word and set flag to true
                 itr = oldWords.erase(itr);
                 deleted = true;
