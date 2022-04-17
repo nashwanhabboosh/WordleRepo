@@ -30,6 +30,14 @@ std::pair<char,int>* makeGuess () {
         return nullptr;
     }
 
+    // makes sure only valid chars are used in the word
+    for (short i = 0;i<5;i++) {
+        if (!isalpha(guess[i])) {
+            std::cerr<<"ERROR: guess contains invalid character: "<<guess[i]<<std::endl;
+            return nullptr;
+        }
+    }
+
     // gets data on each letter
     std::cout<<"What color was each letter?\n";
     for (short i = 0;i<5;i++) {
@@ -235,22 +243,29 @@ std::vector<char> isOneOff (std::list<std::string> &words) {
 // s appears 100 times in the first position
 // m appears 100 times in the second position
 // etc, then the score for "smart" would be 500
+// if a letter appears more than once in a word, its score for the non
+// first appearances is halved
 // whichever word has the highest score is suggested 
 std::string bestGuessByLetter(std::map<char,std::vector<int>>& characters, const std::list<std::string>& words) {
     
     // holds the highest score so far encountered and the word it came from
-    int maxScore = 0;
+    double maxScore = 0;
     std::string bestWord = "";
 
     // iterates through all the possible words
     for (std::string word : words) {
         
         // holds the score for the current word
-        int currentScore = 0;
+        double currentScore = 0;
 
         // iterates through each letter of the current word
         for (unsigned int i = 0;i<5;i++) {
-            currentScore += characters[word[i]][i];
+            if (word.find(word[i])!=i) {
+                currentScore += (0.5*characters[word[i]][i]);
+            } else {
+                currentScore += characters[word[i]][i];
+            }
+            
         }
         // if this word is better then the previous best, remember it
         if (currentScore>maxScore) {
@@ -301,7 +316,7 @@ void printLetterData (const std::map<char,std::vector<int>>& characters) {
 
     // formatting
     std::cout<<"Displaying letter occurences per position"<<std::endl;
-    std::cout<<std::setw(6)<<"1st"
+    std::cout<<std::setw(8)<<"1st"
              <<std::setw(6)<<"2nd"
              <<std::setw(6)<<"3rd"
              <<std::setw(6)<<"4th"
@@ -351,7 +366,7 @@ int main () {
 
             // make a guess and update the word list
             guess = makeGuess();
-            updateWords(*words,guess);
+            if (guess!=nullptr) updateWords(*words,guess);
 
         } else if (selection == 2) {
 
