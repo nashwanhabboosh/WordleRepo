@@ -118,21 +118,6 @@ void getWords(const std::list<std::string> &words) {
     }
 }
 
-// returns an array of the indecies of the apperances the input letter
-std::vector<int> findAllAppearences (std::string word,char look) {
-
-    std::vector<int> output;
-
-    // iterate through the word, pushing back matching indecies
-    for (short i = 0;i<word.size();i++) {
-        if (word[i] == look) {
-            output.push_back(i);
-        }
-    }
-
-    return output;
-}
-
 // determines if a letter appears more than once in a word
 bool multipleApperances (char c, std::string word) {
 
@@ -159,19 +144,6 @@ bool multipleApperances (char c, std::pair<char,int>* word) {
     }
 
     return count>1;
-}
-
-// returns the index of when a character first apperas in a list of pairs
-int findInPairs (std::pair<char,int>* list, char element) {
-    
-    // iterate through the list
-    for (short i = 0; i<5;i++) {
-        if (list[i].first==element) {
-            return i;
-        }
-    }
-    // if its not found, return -1
-    return -1;
 }
 
 // remove all words that dont meet the criteria of the guess
