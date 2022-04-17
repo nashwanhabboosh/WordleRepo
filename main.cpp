@@ -8,32 +8,6 @@
 #include <list>
 #include <ctype.h>
 
-// gets a guess from the user, used for testing
-std::pair<char,int>* getGuess() {
-    
-    // holds the guesses input by the user
-    std::pair<char,int>* guess_pairs = new std::pair<char,int>[5];
-    
-    // iterates 5 times, getting the letter and value for each letter of the guess
-    for (int i = 0;i<5;i++) {
-
-        // holds the current pair and its data
-        std::pair<char,int> cur_pair;
-        char cur_char;
-        int cur_val;
-
-        // gets the values from the user
-        std::cin>>cur_char;
-        std::cin>>cur_val;
-
-        // make the current pair and append it to the array
-        cur_pair.first=cur_char;
-        cur_pair.second=cur_val;
-        guess_pairs[i]=cur_pair;
-    }
-    return guess_pairs;
-}
-
 // guess is taken and stored as an array of pairs 
 // first is the letter second is letter value
 // 0-not in word
