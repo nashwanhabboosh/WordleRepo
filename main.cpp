@@ -147,7 +147,7 @@ void updateWords (std::list<std::string> &oldWords,
             if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
 
                 // if the letter appears only once in the guess and word, remove it
-                if (!multipleApperances(guess[i].first,word)&&!multipleApperances(guess[i].first,guess)) {
+                if (!multipleApperances(guess[i].first,guess)) {
 
                     // remove the word and set flag to true
                     itr = oldWords.erase(itr);
@@ -164,7 +164,7 @@ void updateWords (std::list<std::string> &oldWords,
                     word.find(guess[i].first)==std::string::npos)) {
                     
                     // if the letter appears only once in the guess and word, remove it
-                    if (!multipleApperances(guess[i].first,word)&&!multipleApperances(guess[i].first,guess)) {
+                    if (!multipleApperances(guess[i].first,guess)) {
 
                         // remove the word and set flag to true
                         itr = oldWords.erase(itr);
