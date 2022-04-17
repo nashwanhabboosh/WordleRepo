@@ -1,4 +1,0 @@
-ancle 0 n
-angle 0 n
-ankle 0 n
-anele 0 n
