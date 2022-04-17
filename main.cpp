@@ -147,6 +147,20 @@ bool multipleApperances (char c, std::string word) {
     return count>1;
 }
 
+// determines if a letter appears more than once in a guess
+bool multipleApperances (char c, std::pair<char,int>* word) {
+
+    // counts the number of appearances of the letter
+    int count = 0;
+    
+    // loop through the guess, iterating the count if the letter is encountered
+    for (short i = 0;i<5;i++) {
+        if (word[i].first==c) count++;
+    }
+
+    return count>1;
+}
+
 // returns the index of when a character first apperas in a list of pairs
 int findInPairs (std::pair<char,int>* list, char element) {
     
@@ -164,6 +178,9 @@ int findInPairs (std::pair<char,int>* list, char element) {
 void updateWords (std::list<std::string> &oldWords, 
                     std::pair<char,int>* &guess) {
     
+    std::ofstream output;
+    output.open("output.txt");
+
     // iterates through the list of words
     for (std::list<std::string>::iterator itr = oldWords.begin();itr!=oldWords.end(); ) {
         
@@ -178,7 +195,8 @@ void updateWords (std::list<std::string> &oldWords,
             // if the letter is not in the word, remove the word
             if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
 
-                if (!multipleApperances(guess[i].first,word)) {
+                if (!multipleApperances(guess[i].first,word)&&!multipleApperances(guess[i].first,guess)) {
+                    output<<word<<" 0 "<<guess[i].first<<std::endl;
                     // remove the word and set flag to true
                     itr = oldWords.erase(itr);
                     deleted = true;
@@ -193,7 +211,8 @@ void updateWords (std::list<std::string> &oldWords,
                     (word[i]==guess[i].first ||
                     word.find(guess[i].first)==std::string::npos)) {
                     
-                    if (!multipleApperances(guess[i].first,word)) {
+                    if (!multipleApperances(guess[i].first,word)&&!multipleApperances(guess[i].first,guess)) {
+                        output<<word<<" 1"<<std::endl;
                         // remove the word and set flag to true
                         itr = oldWords.erase(itr);
                         deleted = true;
@@ -203,7 +222,7 @@ void updateWords (std::list<std::string> &oldWords,
 
             // if the letter is in the correct position
             else if (guess[i].second==2&&guess[i].first!=word[i]){
-                
+                output<<word<<" 2"<<std::endl;
                 // remove the word and set flag to true
                 itr = oldWords.erase(itr);
                 deleted = true;

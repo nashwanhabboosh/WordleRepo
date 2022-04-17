@@ -19,3 +19,4 @@ Known issues:
 Solutions with repeating letters will be removed early
 Suggest words with double letters too often
 fix->only have words with double letters be suggested if there are no other possible words to suggest
+seg faults with incorrect guess length
