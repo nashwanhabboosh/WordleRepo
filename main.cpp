@@ -260,9 +260,14 @@ std::string bestGuessByLetter(std::map<char,std::vector<int>>& characters, const
 
         // iterates through each letter of the current word
         for (unsigned int i = 0;i<5;i++) {
+
+            // if the letter has already appeared
             if (word.find(word[i])!=i) {
                 currentScore += (0.5*characters[word[i]][i]);
-            } else {
+            } 
+            
+            // if the letter has not yet appeared
+            else {
                 currentScore += characters[word[i]][i];
             }
             
