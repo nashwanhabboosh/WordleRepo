@@ -133,6 +133,20 @@ std::vector<int> findAllAppearences (std::string word,char look) {
     return output;
 }
 
+// determines if a letter appears more than once in a word
+bool multipleApperances (char c, std::string word) {
+
+    // counts the number of appearances of the letter
+    int count = 0;
+    
+    // loop through the guess, iterating the count if the letter is encountered
+    for (short i = 0;i<5;i++) {
+        if (word[i]==c) count++;
+    }
+
+    return count>1;
+}
+
 // returns the index of when a character first apperas in a list of pairs
 int findInPairs (std::pair<char,int>* list, char element) {
     
@@ -161,40 +175,40 @@ void updateWords (std::list<std::string> &oldWords,
         // iterates through all the letters of the guessed word
         for (unsigned short i = 0;i<5;i++) {
             
-            // checks if double letter
-           // if (findInPairs(guess,guess[i].first)==i) {
-                // if the letter is not in the word, remove the word
-                if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
+            // if the letter is not in the word, remove the word
+            if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
 
-                        // remove the word and set flag to true
-                        itr = oldWords.erase(itr);
-                        deleted = true;
-                        break;
-                } 
-
-                // if the letter is in the wrong location
-                // removes the word if the letter is in the word in the correct location
-                // or it is not in the word at all
-                else if (guess[i].second==1&&
-                        (word.find(guess[i].first)==i ||
-                        word.find(guess[i].first)==std::string::npos)) {
-                        
-                        // remove the word and set flag to true
-                        itr = oldWords.erase(itr);
-                        deleted = true;
-                        break;
-                }
-
-                // if the letter is in the correct position
-                else if (guess[i].second==2&&!(word.find(guess[i].first)==i)){
-                    
+                if (!multipleApperances(guess[i].first,word)) {
                     // remove the word and set flag to true
                     itr = oldWords.erase(itr);
                     deleted = true;
                     break;
                 }
-           // }
-             
+            } 
+
+            // if the letter is in the wrong location
+            // removes the word if the letter is in the word in the correct location
+            // or it is not in the word at all
+            else if (guess[i].second==1&&
+                    (word[i]==guess[i].first ||
+                    word.find(guess[i].first)==std::string::npos)) {
+                    
+                    if (!multipleApperances(guess[i].first,word)) {
+                        // remove the word and set flag to true
+                        itr = oldWords.erase(itr);
+                        deleted = true;
+                        break;
+                    }
+            }
+
+            // if the letter is in the correct position
+            else if (guess[i].second==2&&guess[i].first!=word[i]){
+                
+                // remove the word and set flag to true
+                itr = oldWords.erase(itr);
+                deleted = true;
+                break;
+            }   
         }
 
         // iterate to the next word if none were deleted
