@@ -87,6 +87,11 @@ int prompt () {
 // print out the remaining words
 void getWords(const std::list<std::string> &words) {
 
+    if (!words.size()) {
+        std::cout<<"There are no remaining possible words."<<std::endl;
+        return;
+    }
+
     std::cout<<"Remaining possibilites: "<<std::endl;
 
     // iterate through the words and print them
@@ -268,6 +273,11 @@ std::vector<char> isOneOff (std::list<std::string> &words) {
 // whichever word has the highest score is suggested 
 std::string bestGuessByLetter(std::map<char,std::vector<int>>& characters, const std::list<std::string>& words) {
     
+    // if there are no remaining possible words
+    if (!words.size()) {
+        return "-1";
+    }
+    
     // holds the highest score so far encountered and the word it came from
     double maxScore = 0;
     std::string bestWord = "";
@@ -402,13 +412,22 @@ int main () {
 
             // print letter data
             occurences = getLetterData(*words);
-            printLetterData(occurences);
+            if (occurences.size()) {
+                printLetterData(occurences);
+            } else {
+                std::cout<<"There are no remaining possible words."<<std::endl;
+            }
 
         } else if (selection == 4) {
             
             // get suggested word
             occurences = getLetterData(*words);
-            std::cout<<bestGuessByLetter(occurences,*words)<<" seems to be the best guess."<<std::endl;
+            std::string temp = bestGuessByLetter(occurences,*words);
+            if (temp!="-1") {
+                std::cout<<temp<<" seems to be the best guess."<<std::endl;
+            } else {
+                std::cout<<"There are no remaining possible words."<<std::endl;
+            }
         }
     }
 }
