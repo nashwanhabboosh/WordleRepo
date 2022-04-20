@@ -14,12 +14,3 @@ Explaining the algorithm:
 The user enters a starting guess and the information gotten from the guess.
 The most common letter at each position in the word is found and these letters are combined into a word.
 If this word is a valid guess, the guess is made.
-
-update:
-add a suggestion when you know 3 letters, just look at possible words and guess which ones are real words
-
-Known issues:
-Solutions with repeating letters will be removed early
-Suggest words with double letters too often
-fix->only have words with double letters be suggested if there are no other possible words to suggest
-seg faults with incorrect guess length

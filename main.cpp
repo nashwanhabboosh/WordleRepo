@@ -8,7 +8,7 @@
 #include <list>
 #include <ctype.h>
 
-#define WORD_LENGTH 15
+#define WORD_LENGTH 5
 
 // guess is taken and stored as an array of pairs 
 // first is the letter second is letter value
@@ -67,7 +67,7 @@ std::pair<char,int>* makeGuess (std::vector<bool>& correctLetters) {
 }
 
 // gets the number of 'true's in an array of bools
-int howManyTrue (std::vector<bool>& arr) {
+int getTrueCount (std::vector<bool>& arr) {
     
     // holds number of trues
     int count = 0;
@@ -155,7 +155,7 @@ bool multipleApperances (char c, std::pair<char,int>* word) {
 }
 
 // remove all words that dont meet the criteria of the guess
-void updateWords (std::list<std::string> &oldWords, 
+void updateWordList (std::list<std::string> &oldWords, 
                     std::pair<char,int>* &guess) {
 
     // iterates through the list of words
@@ -218,7 +218,7 @@ void updateWords (std::list<std::string> &oldWords,
 }
 
 // initially gets the words from the input file 
-std::list<std::string>* parseWordsFile (const std::string &inputFile) {
+std::list<std::string>* parseDictionary (const std::string &inputFile) {
     
     std::ifstream istr (inputFile);
 
@@ -300,7 +300,7 @@ std::vector<char> isOneOff (std::list<std::string> &words) {
 // if a letter appears more than once in a word, its score for the non
 // first appearances is halved
 // whichever word has the highest score is suggested 
-std::string bestGuessByLetter(std::map<char,std::vector<int>>& characters, const std::list<std::string>& words) {
+std::string getBestGuess(std::map<char,std::vector<int>>& characters, const std::list<std::string>& words) {
     
     // if there are no remaining possible words
     if (!words.size()) {
@@ -343,7 +343,7 @@ std::string bestGuessByLetter(std::map<char,std::vector<int>>& characters, const
 // returns a map of the frequencies of each letter at each position
 // first WORD_LENGTH elements of the vector are the positions in the word, 
 // last element is total occurences
-std::map<char,std::vector<int>> getLetterData (const std::list<std::string>& words) {
+std::map<char,std::vector<int>> updateLetterData (const std::list<std::string>& words) {
     
     // holds the occurences of each letter at each position
     std::map<char,std::vector<int>> occurences;
@@ -420,8 +420,8 @@ void printLetterData (const std::map<char,std::vector<int>>& characters) {
 int main () {
 
     // parse the input file
-    std::string wordsFile = "non_alphabet_test.txt";
-    std::list<std::string>* words = parseWordsFile(wordsFile);
+    std::string wordsFile = "word_list.txt";
+    std::list<std::string>* words = parseDictionary(wordsFile);
 
     // function the user wants to call
     int selection = -1;
@@ -439,7 +439,7 @@ int main () {
     while (selection!=0) {
 
         // if the correct word is found
-        if (howManyTrue(foundLetters)==WORD_LENGTH) {
+        if (getTrueCount(foundLetters)==WORD_LENGTH) {
             std::cout<<"You found the correct word!\n"<<
                        "The word was "<<*words->begin()<<std::endl;
 
@@ -460,7 +460,7 @@ int main () {
 
             // make a guess and update the word list
             guess = makeGuess(foundLetters);
-            if (guess!=nullptr) updateWords(*words,guess);
+            if (guess!=nullptr) updateWordList(*words,guess);
 
         } else if (selection == 2) {
 
@@ -470,7 +470,7 @@ int main () {
         } else if (selection == 3) {
 
             // print letter data
-            occurences = getLetterData(*words);
+            occurences = updateLetterData(*words);
             if (occurences.size()) {
                 printLetterData(occurences);
             } else {
@@ -480,7 +480,7 @@ int main () {
         } else if (selection == 4) {
 
             // if sixty percent of correct letters have been found
-            if (howManyTrue(foundLetters)>=(WORD_LENGTH*0.6)) {
+            if (getTrueCount(foundLetters)>=(WORD_LENGTH*0.6)) {
                 std::cout<<"Because you have three correct letters,\n"<<
                            "I recommend that you look at the possible words\n"<<
                            "and select one that seems like a real word to you.\n"<<
@@ -488,8 +488,8 @@ int main () {
             }
 
             // get suggested word
-            occurences = getLetterData(*words);
-            std::string temp = bestGuessByLetter(occurences,*words);
+            occurences = updateLetterData(*words);
+            std::string temp = getBestGuess(occurences,*words);
             if (temp!="-1") {
                 std::cout<<temp<<" seems to be the best guess."<<std::endl;
             } else {
