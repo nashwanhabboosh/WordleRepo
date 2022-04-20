@@ -409,8 +409,6 @@ int main () {
     // continue running as long as user keeps calling functions
     while (selection!=0) {
 
-        std::cout<<"greens: "<<howManyTrue(foundLetters)<<std::endl;
-
         // add line break between iterations
         if (selection != -1) std::cout<<std::endl; 
         
