@@ -13,7 +13,7 @@
 // 0-not in word
 // 1-wrong location
 // 2-correct location
-std::pair<char,int>* makeGuess () {
+std::pair<char,int>* makeGuess (std::vector<bool>& correctLetters) {
 
     // holds the current 5 letter word guess
     std::string guess;
@@ -51,6 +51,7 @@ std::pair<char,int>* makeGuess () {
         transform(color.begin(), color.end(), color.begin(), ::tolower);
         if (color=="green"||color == "g") {
             data[i].second=2;
+            correctLetters[i]=true;
         } else if (color == "yellow"||color == "y") {
             data[i].second=1;
         } else if (color == "black"||color == "b") {
@@ -61,6 +62,24 @@ std::pair<char,int>* makeGuess () {
         }
     }
     return data;
+}
+
+// gets the number of 'true's in an array of bools
+int howManyTrue (std::vector<bool> arr) {
+    
+    // holds number of trues
+    int count = 0;
+
+    // iterate through the array
+    for (int i = 0;i<arr.size();i++) {
+        
+        // iterate count for each true
+        if (arr[i]) {
+            count++;
+        }
+    }
+
+    return count;
 }
 
 // prompts the user for what action to take
@@ -384,8 +403,13 @@ int main () {
     // holds the number of occurences for each letter
     std::map<char,std::vector<int>> occurences;
 
+    // holds which position the correct letters have been found for
+    std::vector<bool> foundLetters (5);
+
     // continue running as long as user keeps calling functions
     while (selection!=0) {
+
+        std::cout<<"greens: "<<howManyTrue(foundLetters)<<std::endl;
 
         // add line break between iterations
         if (selection != -1) std::cout<<std::endl; 
@@ -400,7 +424,7 @@ int main () {
         } else if (selection == 1) {
 
             // make a guess and update the word list
-            guess = makeGuess();
+            guess = makeGuess(foundLetters);
             if (guess!=nullptr) updateWords(*words,guess);
 
         } else if (selection == 2) {
