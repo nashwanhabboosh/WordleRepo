@@ -8,6 +8,8 @@
 #include <list>
 #include <ctype.h>
 
+#define WORD_LENGTH 11
+
 // guess is taken and stored as an array of pairs 
 // first is the letter second is letter value
 // 0-not in word
@@ -15,23 +17,23 @@
 // 2-correct location
 std::pair<char,int>* makeGuess (std::vector<bool>& correctLetters) {
 
-    // holds the current 5 letter word guess
+    // holds the current WORD_LENGTH letter word guess
     std::string guess;
     // holds all of the letters and the data on its correctness
-    std::pair<char,int>* data = new std::pair<char,int>[5];
+    std::pair<char,int>* data = new std::pair<char,int>[WORD_LENGTH];
     // holds the color of each letter
     std::string color;
 
     // promps user and stores guess
     std::cout<<"Enter Guess\n";
     std::cin>>guess;
-    if (guess.length()!=5) {
-        std::cerr<<"ERROR: invalid guess, length must be 5 not "<<guess.length()<<std::endl;
+    if (guess.length()!=WORD_LENGTH) {
+        std::cerr<<"ERROR: invalid guess, length must be "<<WORD_LENGTH<<" not "<<guess.length()<<std::endl;
         return nullptr;
     }
 
     // makes sure only valid chars are used in the word
-    for (short i = 0;i<5;i++) {
+    for (short i = 0;i<WORD_LENGTH;i++) {
         if (!isalpha(guess[i])) {
             std::cerr<<"ERROR: guess contains invalid character: "<<guess[i]<<std::endl;
             return nullptr;
@@ -40,7 +42,7 @@ std::pair<char,int>* makeGuess (std::vector<bool>& correctLetters) {
 
     // gets data on each letter
     std::cout<<"What color was each letter?\n";
-    for (short i = 0;i<5;i++) {
+    for (short i = 0;i<WORD_LENGTH;i++) {
 
         // adds each letter to data
         data[i].first=guess[i];
@@ -65,7 +67,7 @@ std::pair<char,int>* makeGuess (std::vector<bool>& correctLetters) {
 }
 
 // gets the number of 'true's in an array of bools
-int howManyTrue (std::vector<bool> arr) {
+int howManyTrue (std::vector<bool>& arr) {
     
     // holds number of trues
     int count = 0;
@@ -131,7 +133,7 @@ bool multipleApperances (char c, std::string word) {
     int count = 0;
     
     // loop through the guess, iterating the count if the letter is encountered
-    for (short i = 0;i<5;i++) {
+    for (short i = 0;i<WORD_LENGTH;i++) {
         if (word[i]==c) count++;
     }
 
@@ -145,7 +147,7 @@ bool multipleApperances (char c, std::pair<char,int>* word) {
     int count = 0;
     
     // loop through the guess, iterating the count if the letter is encountered
-    for (short i = 0;i<5;i++) {
+    for (short i = 0;i<WORD_LENGTH;i++) {
         if (word[i].first==c) count++;
     }
 
@@ -165,7 +167,7 @@ void updateWords (std::list<std::string> &oldWords,
         bool deleted = false;
 
         // iterates through all the letters of the guessed word
-        for (unsigned short i = 0;i<5;i++) {
+        for (unsigned short i = 0;i<WORD_LENGTH;i++) {
             
             // if the letter is not in the word, remove the word
             if (guess[i].second==0&&word.find(guess[i].first)!=std::string::npos) {
@@ -250,7 +252,7 @@ std::vector<char> isOneOff (std::list<std::string> &words) {
     bool flag = false;
 
     // iterate through the letter positions
-    for (short i = 0;i<5;i++) {
+    for (short i = 0;i<WORD_LENGTH;i++) {
 
         char letter = '#';
 
@@ -308,11 +310,11 @@ std::string bestGuessByLetter(std::map<char,std::vector<int>>& characters, const
         double currentScore = 0;
 
         // iterates through each letter of the current word
-        for (unsigned int i = 0;i<5;i++) {
+        for (unsigned int i = 0;i<WORD_LENGTH;i++) {
 
             // if the letter has already appeared
             if (word.find(word[i])!=i) {
-                currentScore += (0.5*characters[word[i]][i]);
+                currentScore += (0.25*characters[word[i]][i]);
             } 
             
             // if the letter has not yet appeared
@@ -331,7 +333,7 @@ std::string bestGuessByLetter(std::map<char,std::vector<int>>& characters, const
 }
 
 // returns a map of the frequencies of each letter at each position
-// first 5 elements of the vector are the positions in the word, 
+// first WORD_LENGTH elements of the vector are the positions in the word, 
 // last element is total occurences
 std::map<char,std::vector<int>> getLetterData (const std::list<std::string>& words) {
     
@@ -342,15 +344,15 @@ std::map<char,std::vector<int>> getLetterData (const std::list<std::string>& wor
     for (std::string word : words) {
         
         // iterate through each letter
-        for (short i = 0;i<5;i++) {
+        for (short i = 0;i<WORD_LENGTH;i++) {
 
             // check if the letter is in the map yet
             if (occurences.find(word[i])==occurences.end()) {
                 
                 // insert the letter if not present
                 std::vector<int> tempvec;
-                for (short j = 0;j<6;j++) {
-                    if (j==i||j==5) tempvec.push_back(1);
+                for (short j = 0;j<WORD_LENGTH+1;j++) {
+                    if (j==i||j==WORD_LENGTH) tempvec.push_back(1);
                     else tempvec.push_back(0);
                 }
                 occurences.insert(std::make_pair(word[i],tempvec));
@@ -358,7 +360,7 @@ std::map<char,std::vector<int>> getLetterData (const std::list<std::string>& wor
             // if it is in the map, increment the positional and total counters
             else {
                 occurences[word[i]][i]++;
-                occurences[word[i]][5]++;
+                occurences[word[i]][WORD_LENGTH]++;
             }
         }
     }
@@ -368,20 +370,39 @@ std::map<char,std::vector<int>> getLetterData (const std::list<std::string>& wor
 // prints the map of letter data
 void printLetterData (const std::map<char,std::vector<int>>& characters) {
 
-    // formatting
-    std::cout<<"Displaying letter occurences per position"<<std::endl;
-    std::cout<<std::setw(8)<<"1st"
-             <<std::setw(6)<<"2nd"
-             <<std::setw(6)<<"3rd"
-             <<std::setw(6)<<"4th"
-             <<std::setw(6)<<"5th"
-             <<std::setw(6)<<"total"
-             <<std::endl;
+    // absolute formatting
+    std::cout<<"Displaying letter occurences per position"<<std::endl<<std::endl;
+    std::cout<<std::setw(8)<<"1st";
+
+    // print one header for each position and a final position header
+    for (int i = 1;i<WORD_LENGTH;i++) {
+        
+        // holds the suffix of the current label
+        std::string temp = std::to_string(i+1);
+
+        // assigns the currect suffix
+        if (i%10>=3||(i%100>=10&&i%100<=13)) {
+            // 11, 12, and 13 are suffixed with 'th' despite ending witha a 1
+            temp+= "th";
+        } else if (i%10==0) {
+            temp += "st";
+        } else if (i%10==1) {
+            temp += "nd";
+        } else if (i%10==2) {
+            temp += "rd";
+        }
+
+        // prints the label
+        std::cout<<std::setw(6)<<temp;
+    }
+
+    // display total label
+    std::cout<<std::setw(6)<<"total"<<std::endl;
              
     // iterate through the map and display the frequencies
     for (auto itr : characters) {
         std::cout<<itr.first<<":";
-        for (short i = 0;i<6;i++) {
+        for (short i = 0;i<WORD_LENGTH+1;i++) {
             std::cout<<std::setw(6)<<itr.second[i];
         }
         std::cout<<std::endl;
@@ -391,7 +412,7 @@ void printLetterData (const std::map<char,std::vector<int>>& characters) {
 int main () {
 
     // parse the input file
-    std::string wordsFile = "word_list.txt";
+    std::string wordsFile = "11Letter_test.txt";
     std::list<std::string>* words = parseWordsFile(wordsFile);
 
     // function the user wants to call
@@ -404,10 +425,18 @@ int main () {
     std::map<char,std::vector<int>> occurences;
 
     // holds which position the correct letters have been found for
-    std::vector<bool> foundLetters (5);
+    std::vector<bool> foundLetters (WORD_LENGTH,false);
 
     // continue running as long as user keeps calling functions
     while (selection!=0) {
+
+        // if the correct word is found
+        if (howManyTrue(foundLetters)==WORD_LENGTH) {
+            std::cout<<"You found the correct word!\n"<<
+                       "The word was "<<*words->begin()<<std::endl;
+
+            exit(EXIT_SUCCESS);
+        }
 
         // add line break between iterations
         if (selection != -1) std::cout<<std::endl; 
@@ -441,7 +470,15 @@ int main () {
             }
 
         } else if (selection == 4) {
-            
+
+            // if sixty percent of correct letters have been found
+            if (howManyTrue(foundLetters)>=(WORD_LENGTH*0.6)) {
+                std::cout<<"Because you have three correct letters,\n"<<
+                           "I recommend that you look at the possible words\n"<<
+                           "and select one that seems like a real word to you.\n"<<
+                           "However, the algorithm thinks that\n";
+            }
+
             // get suggested word
             occurences = getLetterData(*words);
             std::string temp = bestGuessByLetter(occurences,*words);
