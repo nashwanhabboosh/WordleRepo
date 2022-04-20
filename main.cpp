@@ -8,7 +8,7 @@
 #include <list>
 #include <ctype.h>
 
-#define WORD_LENGTH 11
+#define WORD_LENGTH 15
 
 // guess is taken and stored as an array of pairs 
 // first is the letter second is letter value
@@ -230,6 +230,17 @@ std::list<std::string>* parseWordsFile (const std::string &inputFile) {
 
     // iterate through the file of words
     while (istr>>temp) {
+
+        // convert letters to lowercase
+        std::transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
+        
+        // ensures all inputs are correct length
+        if (temp.size()!=WORD_LENGTH) {
+            std::cerr<<"ERROR: word of incorrect length encountered: \""<<
+            temp<<"\" length "<<temp.size()<<" should be "<<WORD_LENGTH<<std::endl; 
+            exit(EXIT_FAILURE);
+        }
+
         words->push_back(temp);
     }
 
@@ -243,9 +254,6 @@ std::vector<char> isOneOff (std::list<std::string> &words) {
     std::vector<char> output;
 
     std::vector<char> tempvec;
-
-    
-
     
     // checks whether a mismatching letter has been found in the 
     // current word yet or not; only 1 can be found per word
@@ -412,7 +420,7 @@ void printLetterData (const std::map<char,std::vector<int>>& characters) {
 int main () {
 
     // parse the input file
-    std::string wordsFile = "11Letter_test.txt";
+    std::string wordsFile = "non_alphabet_test.txt";
     std::list<std::string>* words = parseWordsFile(wordsFile);
 
     // function the user wants to call
@@ -489,4 +497,6 @@ int main () {
             }
         }
     }
+
+    exit(EXIT_SUCCESS);
 }
