@@ -10,6 +10,36 @@
 
 #define WORD_LENGTH 5
 
+// initially gets the words from the input file 
+std::list<std::string>* parseDictionary (const std::string &inputFile) {
+    
+    std::ifstream istr (inputFile);
+
+    // holds the words
+    std::list<std::string>* words = new std::list<std::string>();
+
+    // holds each word temporarily
+    std::string temp;
+
+    // iterate through the file of words
+    while (istr>>temp) {
+
+        // convert letters to lowercase
+        std::transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
+        
+        // ensures all inputs are correct length
+        if (temp.size()!=WORD_LENGTH) {
+            std::cerr<<"ERROR: word of incorrect length encountered: \""<<
+            temp<<"\" length "<<temp.size()<<" should be "<<WORD_LENGTH<<std::endl; 
+            exit(EXIT_FAILURE);
+        }
+
+        words->push_back(temp);
+    }
+
+    return words;
+}
+
 // guess is taken and stored as an array of pairs 
 // first is the letter second is letter value
 // 0-not in word
@@ -106,7 +136,7 @@ int prompt () {
 }
 
 // print out the remaining words
-void getWords(const std::list<std::string> &words) {
+void printWords(const std::list<std::string> &words) {
 
     if (!words.size()) {
         std::cout<<"There are no remaining possible words."<<std::endl;
@@ -215,36 +245,6 @@ void updateWordList (std::list<std::string> &oldWords,
             itr++;
         }
     }
-}
-
-// initially gets the words from the input file 
-std::list<std::string>* parseDictionary (const std::string &inputFile) {
-    
-    std::ifstream istr (inputFile);
-
-    // holds the words
-    std::list<std::string>* words = new std::list<std::string>();
-
-    // holds each word temporarily
-    std::string temp;
-
-    // iterate through the file of words
-    while (istr>>temp) {
-
-        // convert letters to lowercase
-        std::transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
-        
-        // ensures all inputs are correct length
-        if (temp.size()!=WORD_LENGTH) {
-            std::cerr<<"ERROR: word of incorrect length encountered: \""<<
-            temp<<"\" length "<<temp.size()<<" should be "<<WORD_LENGTH<<std::endl; 
-            exit(EXIT_FAILURE);
-        }
-
-        words->push_back(temp);
-    }
-
-    return words;
 }
 
 // returns the best guess for the current word list 
@@ -422,7 +422,7 @@ int main () {
         } else if (selection == 2) {
 
             // print possible remaining words
-            getWords(*words);
+            printWords(*words);
 
         } else if (selection == 3) {
 
