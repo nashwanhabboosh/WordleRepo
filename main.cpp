@@ -290,7 +290,6 @@ std::vector<char> isOneOff (std::list<std::string> &words) {
 }
 
 // returns the best guess for the current word list 
-// find the word with the closest to optimal letter in each position
 // generates a score for each word based on how many occurences each 
 // letter in the word has at that position
 // for example, if in the word "smart", 
