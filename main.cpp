@@ -377,7 +377,7 @@ void printLetterData (const std::map<char,std::vector<int>>& characters) {
 int main () {
 
     // parse the input file
-    std::string wordsFile = "word_list.txt";
+    std::string wordsFile = "Dictionaries/word_list.txt";
     std::list<std::string>* words = parseDictionary(wordsFile);
 
     // function the user wants to call
