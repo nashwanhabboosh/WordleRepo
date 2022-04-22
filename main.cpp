@@ -442,6 +442,11 @@ int main () {
                            "I recommend that you look at the possible words\n"<<
                            "and select one that seems like a real word to you.\n"<<
                            "However, the algorithm thinks that\n";
+            } else if (words->size()<10) {
+                std::cout<<"Because there are less than 10 remaining possible words,\n"<<
+                           "I recommend that you look at the possible words\n"<<
+                           "and select one that seems like a real word to you.\n"<<
+                           "However, the algorithm thinks that\n";
             }
 
             // get suggested word
