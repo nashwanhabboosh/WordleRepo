@@ -23,5 +23,4 @@ its score is only counted as 1/4th of what it would be otherwise.
 The sum of the scores for each letter in "guess" is the score for "guess".
 
 add
-if there are less than 5 words possible, say to look at possible words
 add optional command line arg for dictionary file
