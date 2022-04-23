@@ -436,26 +436,33 @@ int main () {
 
         } else if (selection == 4) {
 
-            // if sixty percent of correct letters have been found
-            if (getTrueCount(foundLetters)>=(WORD_LENGTH*0.6)) {
-                std::cout<<"Because you have three correct letters,\n"<<
-                           "I recommend that you look at the possible words\n"<<
-                           "and select one that seems like a real word to you.\n"<<
-                           "However, the algorithm thinks that\n";
-            } else if (words->size()<10) {
-                std::cout<<"Because there are less than 10 remaining possible words,\n"<<
-                           "I recommend that you look at the possible words\n"<<
-                           "and select one that seems like a real word to you.\n"<<
-                           "However, the algorithm thinks that\n";
-            }
-
-            // get suggested word
-            occurences = updateLetterData(*words);
-            std::string temp = getBestGuess(occurences,*words);
-            if (temp!="-1") {
-                std::cout<<temp<<" seems to be the best guess."<<std::endl;
+            // if the word has been found
+            if (words->size()==1) {
+                std::cout<<*(words->begin())<<" is the only possible word"<<std::endl;
             } else {
-                std::cout<<"There are no remaining possible words."<<std::endl;
+                // if sixty percent of correct letters have been found
+                if (getTrueCount(foundLetters)>=(WORD_LENGTH*0.6)) {
+                    std::cout<<"Because you have three correct letters,\n"<<
+                            "I recommend that you look at the possible words\n"<<
+                            "and select one that seems like a real word to you.\n"<<
+                            "However, the algorithm thinks that\n";
+                } 
+                // if there are less than 10 words remaining
+                else if (words->size()<10) {
+                    std::cout<<"Because there are less than 10 remaining possible words,\n"<<
+                            "I recommend that you look at the possible words\n"<<
+                            "and select one that seems like a real word to you.\n"<<
+                            "However, the algorithm thinks that\n";
+                }
+
+                // get suggested word
+                occurences = updateLetterData(*words);
+                std::string temp = getBestGuess(occurences,*words);
+                if (temp!="-1") {
+                    std::cout<<temp<<" seems to be the best guess."<<std::endl;
+                } else {
+                    std::cout<<"There are no remaining possible words."<<std::endl;
+                }
             }
         }
     }
