@@ -128,8 +128,10 @@ int prompt () {
     std::cin>>temp;
     int tempNum = (int)temp-48;
 
+    // rejects invalid inputs
     if (tempNum<0||tempNum>4) {
-        std::cerr<<(int)temp<<" ERROR: Invalid option, please select an option from 0 - 4\n\n";
+        std::cerr<<"ERROR: Invalid option \""<<temp<<
+                   "\", please select an option from 0 - 4\n\n";
         return prompt();
     }
     return tempNum;
