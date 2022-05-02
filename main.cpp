@@ -121,6 +121,7 @@ int prompt () {
                 "2. See possible remaining words\n"<<
                 "3. See letter data\n"<<
                 "4. See suggested guess\n"<<
+                "5. Get all words with certain letters\n"<<
                 "0. Exit the program"<<std::endl;
 
     // take character input and convert it to int
@@ -129,9 +130,9 @@ int prompt () {
     int tempNum = (int)temp-48;
 
     // rejects invalid inputs
-    if (tempNum<0||tempNum>4) {
+    if (tempNum<0||tempNum>5) {
         std::cerr<<"ERROR: Invalid option \""<<temp<<
-                   "\", please select an option from 0 - 4\n\n";
+                   "\", please select an option from 0 - 5\n\n";
         return prompt();
     }
     return tempNum;
@@ -376,6 +377,39 @@ void printLetterData (const std::map<char,std::vector<int>>& characters) {
     }
 }
 
+// gets all words containing certain letters
+std::vector<std::string> getWordsWithLetters (std::string letters,std::string wordsFile) {
+    
+    // get all of the words again
+    std::list<std::string>* words = parseDictionary(wordsFile);
+
+    std::vector<std::string> result;
+
+    // iterate through the words
+    for (std::string word : *words) {
+
+        // holds if the word is valid
+        bool flag = true;
+
+        // iterate through the required words
+        for (char letter : letters) {
+
+            // if the letter is not found
+            if (word.find(letter)==std::string::npos) {
+                flag = false;
+                break;
+            }
+        }
+
+        // add the word to the returned list if necessary
+        if (flag) {
+            result.push_back(word);
+        }
+    }
+
+    return result;
+}
+
 int main () {
 
     // parse the input file
@@ -465,6 +499,37 @@ int main () {
                 } else {
                     std::cout<<"There are no remaining possible words."<<std::endl;
                 }
+            }
+        } else if (selection == 5) {
+
+            // holds the possible words and required letters
+            std::vector<std::string> possibleWords;
+            std::string letters;
+
+            std::cout<<"Enter the required letters as one word: "<<std::endl;
+            std::cin>>letters;
+
+            // get the possible words
+            possibleWords = getWordsWithLetters(letters,wordsFile);
+
+            // check if there are any possible words
+            if (!possibleWords.size()) {
+                std::cout<<"There are no words containing all of those letters.\n";
+            } else if (possibleWords.size()==1) {
+                std::cout<<"The only word containing all of those letters is:\n";
+            } else {
+                std::cout<<"The words containing all of those letters are:\n";
+            }
+
+            // print the words
+            for (int i = 0;i<possibleWords.size();i++) {
+
+                // print the words
+                std::cout<<possibleWords[i]<<" ";
+
+                // add a line break every 5 words
+                if (i%5==4||i==possibleWords.size()-1) 
+                    std::cout<<std::endl; 
             }
         }
     }
