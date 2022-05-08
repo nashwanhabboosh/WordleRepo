@@ -478,7 +478,7 @@ int main () {
             } else {
                 // if sixty percent of correct letters have been found
                 if (getTrueCount(foundLetters)>=(WORD_LENGTH*0.6)) {
-                    std::cout<<"Because you have three correct letters,\n"<<
+                    std::cout<<"Because you have at least three correct letters,\n"<<
                             "I recommend that you look at the possible words\n"<<
                             "and select one that seems like a real word to you.\n"<<
                             "However, the algorithm thinks that\n";
