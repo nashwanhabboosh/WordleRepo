@@ -25,3 +25,4 @@ The sum of the scores for each letter in "guess" is the score for "guess".
 additions
 add optional command line arg for dictionary file
 when becomes chrome extension, have simple version and one with all this extra data
+add crossword solver: given letters in positions, want possible words
